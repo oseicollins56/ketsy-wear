@@ -87,14 +87,6 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Ketsy API is running', env: process.env.NODE_ENV });
 });
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../frontend/build')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html'));
-  });
-}
-
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
