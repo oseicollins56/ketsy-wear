@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend/uploads:/app/uploads
+    restart: unless-stopped
+    networks:
+      - ketsy-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - ketsy-network
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ketsy
+    networks:
+      - ketsy-network
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+
+networks:
+  ketsy-network:
+    driver: bridge
